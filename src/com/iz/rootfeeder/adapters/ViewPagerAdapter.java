@@ -1,7 +1,11 @@
 package com.iz.rootfeeder.adapters;
 
-import com.iz.rootfeeder.fragments.IndicatorFragment;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iz.rootfeeder.fragments.CountryFragment;
+import com.iz.rootfeeder.fragments.GraphContainerFragment;
+import com.iz.rootfeeder.fragments.IndicatorFragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,38 +13,28 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-	private int number_tabs = 2;
-	private Fragment fragment;
-
 	public ViewPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
 
 	@Override
 	public Fragment getItem(int position) {
-		int counter = position + 1;
-		Log.v("Item Clicked", "Postition: " + counter);
-		switch (position) {
-		case 0:
-			fragment = CountryFragment.instanceOf();
-			return fragment;
-		case 1:
-			fragment = IndicatorFragment.InstanceOf();
-			return fragment;
-		}
-		return fragment;
-	}
-
-	@Override
-	public int getItemPosition(Object object) {
-		// TODO Auto-generated method stub
-		return POSITION_NONE;
+		Log.v("Size ", "Size: " + getFragments().size());
+		return getFragments().get(position);
 	}
 
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return number_tabs;
+		return getFragments().size();
+	}
+
+	public List<Fragment> getFragments() {
+		List<Fragment> fragment = new ArrayList<Fragment>();
+		 fragment.add(CountryFragment.instanceOf());
+		 fragment.add(IndicatorFragment.instanceOf());
+		 fragment.add(GraphContainerFragment.instanceOf());
+		return fragment;
 	}
 
 }

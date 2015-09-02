@@ -5,11 +5,5 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
-    <item
-        android:id="@+id/item1"
-        android:checkable="false"
-        android:checked="true"
-        android:visible="false">
-    </item>
 
 </menu>

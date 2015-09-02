@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="1960"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/SeekBar01"
+            style="@style/SeekBarseekbar_custom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.95"
+            android:max="2015"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="2015"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/yearFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="1960"
+            android:textColor="@android:color/white" />
+
+        <SeekBar
+            android:id="@+id/yearSeekbar"
+            style="@style/SeekBarseekbar_custom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.95"
+            android:max="2015"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/yearTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="2015"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</LinearLayout>

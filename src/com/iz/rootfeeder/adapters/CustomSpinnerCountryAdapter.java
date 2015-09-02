@@ -3,8 +3,8 @@ package com.iz.rootfeeder.adapters;
 import java.util.List;
 
 import com.iz.rootfeeder.R;
-import com.iz.rootfeeder.model.CodeCountryPair;
 import com.iz.rootfeeder.model.Util;
+import com.iz.rootfeeder.model.beans.CodeCountryPair;
 
 import android.app.Activity;
 import android.util.Log;
@@ -45,7 +45,7 @@ public class CustomSpinnerCountryAdapter extends ArrayAdapter<CodeCountryPair> {
 		View mySpinner = convertView;
 		if(mySpinner == null){
 			holder = new ViewHolder();
-			mySpinner = inflater.inflate(R.layout.layout_country, parent, false);
+			mySpinner = inflater.inflate(R.layout.custom_country_item, parent, false);
 			holder.countryName = (TextView) mySpinner.findViewById(R.id.textView_country);
 			holder.countryFlag = (ImageView) mySpinner.findViewById(R.id.imageView_flag);
 			mySpinner.setTag(holder);

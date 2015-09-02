@@ -2,21 +2,54 @@
     xmlns:moodsta="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/blurred_background"
     android:orientation="vertical" >
 
-    <android.support.v7.widget.Toolbar
+    <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue"
+        android:background="@android:color/holo_blue_dark"
         android:elevation="1dp"
-        android:minHeight="?attr/actionBarSize" />
+        android:homeAsUpIndicator="@drawable/ic_launcher"
+        android:minHeight="?attr/actionBarSize"
+        android:orientation="horizontal" >
 
-    <com.iz.rootfeeder.adapters.DisableSwipeViewPager
-        android:id="@+id/viewpager"
+        <LinearLayout
+            android:id="@+id/icon_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="15dp"
+                android:src="@drawable/arrow_left" />
+
+            <View
+                android:layout_width="1dp"
+                android:padding="5dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                 />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/appname"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="15dp"
+            android:text="RootFeeder"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-    </com.iz.rootfeeder.adapters.DisableSwipeViewPager>
+    </FrameLayout>
 
 </LinearLayout>

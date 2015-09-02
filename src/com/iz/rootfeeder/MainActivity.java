@@ -3,37 +3,38 @@ package com.iz.rootfeeder;
 import com.iz.rootfeeder.adapters.DisableSwipeViewPager;
 import com.iz.rootfeeder.adapters.ViewPagerAdapter;
 import com.iz.rootfeeder.fragments.CountryFragment;
+import com.iz.rootfeeder.model.Util;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-public class MainActivity extends AppCompatActivity {
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+public class MainActivity extends AppCompatActivity{
 	
 	private String MainMenuTag = "com.iz.MainMenuFragment";
 	private ActionBar actionBar;
 	private FragmentManager fm;
-	private DisableSwipeViewPager viewPager;
 	private ViewPagerAdapter adapter;
+	private LinearLayout toolbar;
+	private Util util;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		fm = getSupportFragmentManager();
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		viewPager = (DisableSwipeViewPager) findViewById(R.id.viewpager);
-		actionBar = getSupportActionBar();
-		actionBar.setDisplayShowHomeEnabled(true);
-		CountryFragment mainMenuFragment = CountryFragment.instanceOf();
-		adapter = new ViewPagerAdapter(fm);
-		viewPager.setAdapter(adapter);
+		util =  new Util(getApplicationContext());
+		toolbar = (LinearLayout) findViewById(R.id.toolbar);
+		util.setFontForView((ViewGroup) toolbar);
+		CountryFragment fragment = CountryFragment.instanceOf();
+		fm.beginTransaction().replace(R.id.frame_content,fragment, "com.iz.rootfeeder.country").addToBackStack("com.iz.rootfeeder.country").commit();
+		
+		
 	}
 
 	@Override
@@ -54,19 +55,17 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		printStack();
-		if (fm.getBackStackEntryCount() > 0) {
+		if (fm.getBackStackEntryCount() > 1) {
 			fm.popBackStack();
 		} else {
 			super.onBackPressed();
 		}
 		super.onBackPressed();
 	}
-	
 	public void printStack(){
 		FragmentManager fm = getSupportFragmentManager();
 		for(int i=0;i<fm.getBackStackEntryCount();i++){
 			Log.v("Stack printStack", fm.getBackStackEntryAt(i).getName());
 		}
 	}
-	
 }

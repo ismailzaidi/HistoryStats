@@ -20,123 +20,93 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.iz.rootfeeder.model.beans.CodeCountryPair;
+import com.iz.rootfeeder.model.beans.CodeIndicatorPair;
 import com.iz.rootfeeder.model.http.JSONResponseTask;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import au.com.bytecode.opencsv.CSVReader;
-/**
- * The purpose of this class is to fetch all the information from Http with additional function to aide the application
- * @author Team V
- * @version 1.00
- */
+
 public class Util {
-	
+
 	private final static String countryQueryURL = "http://api.worldbank.org/country?per_page=300&format=json";
-	
-	/**
-	 * This method will fetch the URL and return a String which be the HTML contents
-	 * The Parameter will a URL parsned in via the Async class during the background
-	 * @param url
-	 * @return
-	 */
-	public static String readData(String url){ 
-		/**Calling the HTTP client */
+	private String countryCodeTag = "com.iz.rootfeeder.codecountry";
+	private String indicatorCodeTag = "com.iz.rootfeeder.indicator";
+	private Context context;
+
+	public Util(Context context) {
+		this.context = context;
+	}
+
+	public static String readData(String url) {
 		HttpClient client = new DefaultHttpClient();
-		/**Initialising HTTP get to accept the URL as a parameter*/
 		HttpGet get = new HttpGet(url);
-		/**Create a string content for fetching all details in the html*/
 		StringBuilder content = new StringBuilder();
 		/** */
 		try {
-			/**Retrieving a response to aide in http retrieval */
 			HttpResponse response = client.execute(get);
-			/**Fetching the status of the response*/
 			int responseCode = response.getStatusLine().getStatusCode();
-			/**Making an if statement to check time*/
 			if (responseCode == 200) {
-				/**Retrieving the data*/
 				InputStream in = response.getEntity().getContent();
-				/**Create a buffered reader to read the input stream*/
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(in));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-				/**Read each line of the html file*/
 				String readLine = reader.readLine();
-				/**Looping through the content*/
 				while (readLine != null) {
-					/**Using the String builder to append*/
 					content.append(readLine);
-					/**Initialising the readline to the next line*/
 					readLine = reader.readLine();
 				}
 			} else {
-				/**If response was too slow, an exception will be thrown*/
-				Log.w("DATA RETRIEVAL",
-						"Unable to read data.  HTTP response code = "
-								+ responseCode);
-				/**Making the content of the String builder null*/
+				Log.w("DATA RETRIEVAL", "Unable to read data.  HTTP response code = " + responseCode);
 				content = null;
 			}
 		} catch (ClientProtocolException e) {
 			Log.e("readData", "ClientProtocolException:\n" + e.getMessage());
 		} catch (IOException e) {
-			Log.e("readData", "IOException:\n+e.getMessage()");
+			Log.e("readData", e.getMessage());
 		}
 
-		/**Returning null if String builder is empty*/
 		if (content == null) {
 			return (null);
 		} else {
-			/**Return the results of the String*/
 			return (content.toString());
 		}
 	}
-	/**
-	 * This will return the flag that is contained in the drawable folder, it will also get the country code together
-	 * Method will return a integer to attach to the ListView
-	 * @param context
-	 * @param countryCode
-	 * @return
-	 */
-	public static int getFlag(Context context, String countryCode){
-		
-		return context.getResources().getIdentifier(countryCode.toLowerCase(Locale.getDefault()), "drawable", context.getPackageName());
-	}	
-	/**
-	 * The country code will be fetched from a CSV file, the contents are then loaded into an ArrayList
-	 * 
-	 * @param context
-	 * @return
-	 */
+
+	public static int getFlag(Context context, String countryCode) {
+
+		return context.getResources().getIdentifier(countryCode.toLowerCase(Locale.getDefault()), "drawable",
+				context.getPackageName());
+	}
+
 	public static ArrayList<CodeIndicatorPair> readIndicatorsCSV(Context context) {
-		/**Initialise the input stream */
 		InputStream is = null;
 		try {
-		/**Reading the file from the assets folder*/
 			is = context.getAssets().open("indicators.csv");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		/**Declaring the CSVReader*/
-		CSVReader reader;		
-		/**Delcaring the Arraylist which has a generic type of CodeIndicatorPair Object */
+		CSVReader reader;
 		ArrayList<CodeIndicatorPair> indicators = new ArrayList<CodeIndicatorPair>();
-	
+
 		try {
-			/**Reading the input stream for the CSVReader*/
 			reader = new CSVReader(new InputStreamReader(is));
-			/**Declaring an array of type String to locate the position of csv index*/
 			String[] nextLine;
-			/**Loop through the csv file*/
 			while ((nextLine = reader.readNext()) != null) {
-				/**Adding the contents of the file to the ArrayList*/
 				indicators.add(new CodeIndicatorPair(nextLine[0], nextLine[1], nextLine[2]));
 			}
-			/**Close InputStreams and CSVReader*/
 			reader.close();
 			is.close();
 		} catch (FileNotFoundException e) {
@@ -144,75 +114,140 @@ public class Util {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		/**Returning the indicator ArrayList*/
 		return indicators;
 	}
-	/**
-	 * This is a method to return the format the String which will be the values returned from the JSON
-	 * @param value
-	 * @return
-	 */
+
+	public static String getJSONFromAssets(Context context) {
+		String fileData = "";
+		try {
+			InputStream inputStream = context.getAssets().open("country_json.txt");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				fileData += line;
+			}
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fileData;
+	}
+
 	public static String formatNumber(String value) {
-		/**Decimal Format declared with a pattern to aide the values to be displayed properly*/
 		DecimalFormat formatNumber = new DecimalFormat("####,###,###,###.##");
-		/**double declared with an intial nan value*/
 		double ConverToDouble = Double.NaN;
 		try {
-			/** Convert the string value to double*/
 			ConverToDouble = Double.parseDouble(value);
 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
-		/** Returns the String according to the decimalFormat*/
 		return new String(formatNumber.format(ConverToDouble));
 	}
-	
+
 	public static boolean isNetworkAvailable(Context context) {
-		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connectivityManager = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null;
 	}
-	
-	public static boolean isWiFiConnected(Context context){
+
+	public static boolean isWiFiConnected(Context context) {
 		ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wiFi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		return wiFi.isConnected();
 	}
-	
-	public static void noConnectionToastMessage(Context context){
-		Toast.makeText(context, "No data connection, connect to cellular data or WiFi!", Toast.LENGTH_LONG).show();						
+
+	public static void noConnectionToastMessage(Context context) {
+		Toast.makeText(context, "No data connection, connect to cellular data or WiFi!", Toast.LENGTH_LONG).show();
 
 	}
-	
-	public static ArrayList<CodeCountryPair> fetchCountries(){
+
+	public static ArrayList<CodeCountryPair> fetchCountries(Context context) {
 		ArrayList<CodeCountryPair> codeCountryPairs = new ArrayList<CodeCountryPair>();
 		JSONArray countriesJsonArray = null;
-		JSONArray countries = null;	
-		
+		JSONArray countries = null;
+
 		try {
-			countriesJsonArray = new JSONResponseTask().execute(countryQueryURL).get();
-		
-			countries = countriesJsonArray.getJSONArray(1);			
-					
-			for (int i = 1; i < countries.length(); i++){				
-				JSONObject country = countries.getJSONObject(i);
-				String capitalCity = country.getString("capitalCity");
-				
-				if(capitalCity.length() > 0){
-					codeCountryPairs.add(new CodeCountryPair(country.getString("iso2Code"), country.getString("name")));
-				}								
+			String json_country = getJSONFromAssets(context);
+			Log.v("JSON", json_country);
+			countriesJsonArray = new JSONArray(json_country);
+
+			if (countriesJsonArray != null) {
+				countries = countriesJsonArray.getJSONArray(1);
+
+				for (int i = 1; i < countries.length(); i++) {
+					JSONObject country = countries.getJSONObject(i);
+					String capitalCity = country.getString("capitalCity");
+
+					if (capitalCity.length() > 0) {
+						codeCountryPairs
+								.add(new CodeCountryPair(country.getString("iso2Code"), country.getString("name")));
+					}
+				}
 			}
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		Collections.sort(codeCountryPairs);
-		return codeCountryPairs;		
+
+		return codeCountryPairs;
 	}
 
+	public String loadSavedPreferencesForCountryPair() {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getString(countryCodeTag, "0");
+
+	}
+
+	public void savePreferencesForCountry(ArrayList<CodeCountryPair> items) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor editor = sharedPreferences.edit();
+		String countryList = "";
+		for(CodeCountryPair list: items){
+			countryList += list.getCode() +"," + list.getName() + ";";
+		}
+		countryList = countryList.substring(0,countryList.length()-1); //Removes the last ";" which isn't required
+		editor.putString(countryCodeTag, countryList);
+		editor.commit();
+	}
+
+	public String loadSavedPreferencesForIndicator() {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getString(indicatorCodeTag, "0");
+
+	}
+
+	public void savePreferencesForIndicator(CodeIndicatorPair splashboolean) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor editor = sharedPreferences.edit();
+		String data = splashboolean.getCode() + "," + splashboolean.getName();
+		editor.putString(indicatorCodeTag, data);
+		editor.commit();
+	}
+
+	public void setFontForView(ViewGroup viewChildren) {
+		Typeface font = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
+		View child;
+		for (int i = 0; i < viewChildren.getChildCount(); i++) {
+			child = viewChildren.getChildAt(i);
+			if (child instanceof TextView) {
+				((TextView) child).setTypeface(font);
+				;
+			} else if (child instanceof Button) {
+				((Button) child).setTypeface(font);
+				;
+			} else if (child instanceof EditText) {
+				((EditText) child).setTypeface(font);
+				;
+			} else if (child instanceof ViewGroup) {
+				setFontForView((ViewGroup) child);
+
+			}
+
+		}
+	}
 }

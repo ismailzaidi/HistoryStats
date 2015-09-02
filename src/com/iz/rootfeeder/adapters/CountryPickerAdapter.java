@@ -3,8 +3,8 @@ package com.iz.rootfeeder.adapters;
 import java.util.List;
 
 import com.iz.rootfeeder.R;
-import com.iz.rootfeeder.model.CodeCountryPair;
 import com.iz.rootfeeder.model.Util;
+import com.iz.rootfeeder.model.beans.CodeCountryPair;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
