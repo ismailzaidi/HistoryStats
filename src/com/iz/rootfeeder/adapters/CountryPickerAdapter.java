@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.iz.rootfeeder.R;
 import com.iz.rootfeeder.model.Util;
-import com.iz.rootfeeder.model.beans.CodeCountryPair;
+import com.iz.rootfeeder.model.beans.CountryCode;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -14,12 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CountryPickerAdapter extends ArrayAdapter<CodeCountryPair>{
+public class CountryPickerAdapter extends ArrayAdapter<CountryCode>{
 
 	private Activity activity;
 	private ViewHolder holder;
 	
-	public CountryPickerAdapter(Activity activity, int resource, List<CodeCountryPair> codeCountryPairs) {
+	public CountryPickerAdapter(Activity activity, int resource, List<CountryCode> codeCountryPairs) {
 		super(activity, resource, codeCountryPairs);
 		this.activity = activity;
 	}	
@@ -48,7 +48,7 @@ public class CountryPickerAdapter extends ArrayAdapter<CodeCountryPair>{
 			holder = (ViewHolder) v.getTag();
 		}
 
-		CodeCountryPair codeCountryPair = getItem(pos);
+		CountryCode codeCountryPair = getItem(pos);
 		Integer flagResId = Util.getFlag(activity, codeCountryPair.getCode());
 		
 		if(flagResId !=0){

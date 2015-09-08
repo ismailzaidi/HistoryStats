@@ -46,7 +46,7 @@ public class JSONHandler {
 				if (!value.equals("null")) {
 					innerValue = Float.parseFloat(value);
 				} else {
-					innerValue = 0;
+					innerValue = 1;
 				}
 				countryMap.put(innerValue, year);
 			}

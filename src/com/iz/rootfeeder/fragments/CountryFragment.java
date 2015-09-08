@@ -2,19 +2,25 @@ package com.iz.rootfeeder.fragments;
 
 import java.util.ArrayList;
 
+import com.iz.rootfeeder.GraphActivity;
 import com.iz.rootfeeder.MainActivity;
 import com.iz.rootfeeder.R;
 import com.iz.rootfeeder.adapters.CustomCountryAdapter;
 import com.iz.rootfeeder.adapters.DisableSwipeViewPager;
 import com.iz.rootfeeder.model.Util;
-import com.iz.rootfeeder.model.beans.CodeCountryPair;
+import com.iz.rootfeeder.model.beans.CountryCode;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.drawable.Drawable;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,23 +36,27 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class CountryFragment extends Fragment implements OnClickListener,OnItemClickListener {
+public class CountryFragment extends Fragment implements OnClickListener, OnItemClickListener {
 
-	private String IndicatorTag = "com.iz.fragment.indicatorfragment";
+	private String MAIN_TAG = "com.iz.rootfeeder.mainActivity";
 	private CustomCountryAdapter mAdapter;
 	private ListView countryListView;
 	private EditText searchFilterEditText;
 	private FragmentManager fm;
-	private ArrayList<CodeCountryPair> list;
+	private ArrayList<CountryCode> list;
 	private Util utils;
 	private FrameLayout frame_layout;
 	private LinearLayout actionBackLayout;
-	
+
 	public static CountryFragment instanceOf() {
 		CountryFragment fragment = new CountryFragment();
 		return fragment;
 	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -70,6 +80,7 @@ public class CountryFragment extends Fragment implements OnClickListener,OnItemC
 		utils.setFontForView((ViewGroup) view);
 		frame_layout.setOnClickListener(this);
 		countryListView.setOnItemClickListener(this);
+
 		return view;
 	}
 
@@ -80,67 +91,68 @@ public class CountryFragment extends Fragment implements OnClickListener,OnItemC
 			return true;
 		}
 	}
-	private ArrayList<CodeCountryPair> getSelectedItems(){
-		ArrayList<CodeCountryPair> codeCountrylist = new ArrayList<CodeCountryPair>();
+
+
+	private ArrayList<CountryCode> getSelectedItems() {
+		ArrayList<CountryCode> codeCountrylist = new ArrayList<CountryCode>();
 		SparseBooleanArray checkedItems = countryListView.getCheckedItemPositions();
 		int checkedItemSize = checkedItems.size();
-		for(int i=0;i<checkedItemSize;i++){
+		for (int i = 0; i < checkedItemSize; i++) {
 			int position = checkedItems.keyAt(i);
-			if(checkedItems.valueAt(i)){
-				codeCountrylist.add((CodeCountryPair)mAdapter.getItem(position));
+			if (checkedItems.valueAt(i)) {
+				codeCountrylist.add((CountryCode) mAdapter.getItem(position));
 			}
 		}
 		return codeCountrylist;
 	}
+
 	@Override
 	public void onClick(View v) {
-		IndicatorFragment indicatorFragment = IndicatorFragment.instanceOf();
-		changeFragment(indicatorFragment, IndicatorTag);
-		if(v.getId()==R.id.confirmButton){
-			ArrayList<CodeCountryPair> list = getSelectedItems();
-			utils.savePreferencesForCountry(list);
-			IndicatorFragment fragment = IndicatorFragment.instanceOf();
-			String tag = "com.iz.rootfeeder.indicator";
-			changeFragment(fragment, tag);
-			Log.v("onClick", "Size: " + list.size());
+		if (v.getId() == R.id.confirmButton) {
+			ArrayList<CountryCode> list = getSelectedItems();
+			int size = list.size();
+			if (size != 0) {
+				utils.savePreferencesForCountry(list);
+				if(Util.isNetworkAvailable(getActivity().getApplicationContext()))
+				{
+					Intent intent = new Intent(getActivity().getApplicationContext(), GraphActivity.class);
+					startActivity(intent);
+				}else{
+					Util.noConnectionToastMessage(getActivity().getApplicationContext());
+				}
+			} else {
+				Toast.makeText(getActivity().getApplicationContext(), "Select a country", Toast.LENGTH_SHORT).show();
+			}
 		}
 
-	}
-
-	private void changeFragment(Fragment fragment, String fragmentTag) {
-		FragmentTransaction transaction = fm.beginTransaction();
-		transaction.setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out);
-		transaction.replace(R.id.frame_content, fragment,fragmentTag);
-		transaction.addToBackStack(fragmentTag);
-		transaction.commit();
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View parent, int position, long id) {
 		// TODO Auto-generated method stub
 		frame_layout.setVisibility(View.VISIBLE);
-		
+
 	}
+
 	private TextWatcher textFilter = new TextWatcher() {
-		
+
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			Log.v("filterTextwatcher", s.toString());
 			mAdapter.getFilter().filter(s.toString());
 		}
-		
+
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		@Override
 		public void afterTextChanged(Editable s) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
-	
 
 }

@@ -1,7 +1,6 @@
 package com.iz.rootfeeder.model;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,7 +8,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -20,9 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.iz.rootfeeder.model.beans.CodeCountryPair;
-import com.iz.rootfeeder.model.beans.CodeIndicatorPair;
-import com.iz.rootfeeder.model.http.JSONResponseTask;
+import com.iz.rootfeeder.model.beans.CountryCode;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -38,7 +34,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import au.com.bytecode.opencsv.CSVReader;
 
 public class Util {
 
@@ -91,31 +86,6 @@ public class Util {
 				context.getPackageName());
 	}
 
-	public static ArrayList<CodeIndicatorPair> readIndicatorsCSV(Context context) {
-		InputStream is = null;
-		try {
-			is = context.getAssets().open("indicators.csv");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		CSVReader reader;
-		ArrayList<CodeIndicatorPair> indicators = new ArrayList<CodeIndicatorPair>();
-
-		try {
-			reader = new CSVReader(new InputStreamReader(is));
-			String[] nextLine;
-			while ((nextLine = reader.readNext()) != null) {
-				indicators.add(new CodeIndicatorPair(nextLine[0], nextLine[1], nextLine[2]));
-			}
-			reader.close();
-			is.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return indicators;
-	}
 
 	public static String getJSONFromAssets(Context context) {
 		String fileData = "";
@@ -165,8 +135,8 @@ public class Util {
 
 	}
 
-	public static ArrayList<CodeCountryPair> fetchCountries(Context context) {
-		ArrayList<CodeCountryPair> codeCountryPairs = new ArrayList<CodeCountryPair>();
+	public static ArrayList<CountryCode> fetchCountries(Context context) {
+		ArrayList<CountryCode> codeCountryPairs = new ArrayList<CountryCode>();
 		JSONArray countriesJsonArray = null;
 		JSONArray countries = null;
 
@@ -184,7 +154,7 @@ public class Util {
 
 					if (capitalCity.length() > 0) {
 						codeCountryPairs
-								.add(new CodeCountryPair(country.getString("iso2Code"), country.getString("name")));
+								.add(new CountryCode(country.getString("iso2Code"), country.getString("name")));
 					}
 				}
 			}
@@ -203,11 +173,12 @@ public class Util {
 
 	}
 
-	public void savePreferencesForCountry(ArrayList<CodeCountryPair> items) {
+	public void savePreferencesForCountry(ArrayList<CountryCode> items) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		Editor editor = sharedPreferences.edit();
 		String countryList = "";
-		for(CodeCountryPair list: items){
+		Log.v("savePreferenceCountry", "Size: " +items.size());
+		for(CountryCode list: items){
 			countryList += list.getCode() +"," + list.getName() + ";";
 		}
 		countryList = countryList.substring(0,countryList.length()-1); //Removes the last ";" which isn't required
@@ -215,22 +186,10 @@ public class Util {
 		editor.commit();
 	}
 
-	public String loadSavedPreferencesForIndicator() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString(indicatorCodeTag, "0");
 
-	}
-
-	public void savePreferencesForIndicator(CodeIndicatorPair splashboolean) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		Editor editor = sharedPreferences.edit();
-		String data = splashboolean.getCode() + "," + splashboolean.getName();
-		editor.putString(indicatorCodeTag, data);
-		editor.commit();
-	}
 
 	public void setFontForView(ViewGroup viewChildren) {
-		Typeface font = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
+		Typeface font = Typeface.createFromAsset(context.getAssets(), "OpenSans-Regular.ttf");
 		View child;
 		for (int i = 0; i < viewChildren.getChildCount(); i++) {
 			child = viewChildren.getChildAt(i);

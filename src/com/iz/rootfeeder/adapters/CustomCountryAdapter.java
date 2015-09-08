@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.iz.rootfeeder.R;
 import com.iz.rootfeeder.model.Util;
-import com.iz.rootfeeder.model.beans.CodeCountryPair;
+import com.iz.rootfeeder.model.beans.CountryCode;
 
 import android.app.Activity;
 import android.util.Log;
@@ -22,12 +22,12 @@ public class CustomCountryAdapter extends BaseAdapter implements Filterable {
 
 	private Activity activity;
 	private ViewHolder holder;
-	private ArrayList<CodeCountryPair> original_list;
-	private ArrayList<CodeCountryPair> filter_list;
+	private ArrayList<CountryCode> original_list;
+	private ArrayList<CountryCode> filter_list;
 	private CountryFilter filter;
 	private Util utils;
 
-	public CustomCountryAdapter(Activity activity, ArrayList<CodeCountryPair> original_list) {
+	public CustomCountryAdapter(Activity activity, ArrayList<CountryCode> original_list) {
 		this.activity = activity;
 		this.original_list = original_list;
 		this.filter_list=original_list;
@@ -71,7 +71,7 @@ public class CustomCountryAdapter extends BaseAdapter implements Filterable {
 			holder = (ViewHolder) v.getTag();
 		}
 
-		CodeCountryPair codeCountryPair = original_list.get(pos);
+		CountryCode codeCountryPair = original_list.get(pos);
 		Integer flagResId = Util.getFlag(activity, codeCountryPair.getCode());
 
 		if (flagResId != 0) {
@@ -105,11 +105,11 @@ public class CustomCountryAdapter extends BaseAdapter implements Filterable {
 				results.values = filter_list;
 				results.count = filter_list.size();
 			} else {
-				ArrayList<CodeCountryPair> nlist = new ArrayList<CodeCountryPair>();
+				ArrayList<CountryCode> nlist = new ArrayList<CountryCode>();
 				for (int i = 0; i < filter_list.size(); i++) {
 					String countryName = filter_list.get(i).getName().toLowerCase();
 					if (countryName.contains(filterString)) {
-						CodeCountryPair element = filter_list.get(i);
+						CountryCode element = filter_list.get(i);
 						Log.v("CountryFilter Checker", "True: " + countryName);
 						nlist.add(element);
 					}
@@ -124,7 +124,7 @@ public class CustomCountryAdapter extends BaseAdapter implements Filterable {
 
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
-			original_list = (ArrayList<CodeCountryPair>) results.values;
+			original_list = (ArrayList<CountryCode>) results.values;
 			notifyDataSetChanged();
 		}
 

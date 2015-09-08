@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.iz.rootfeeder.R;
 import com.iz.rootfeeder.model.Util;
-import com.iz.rootfeeder.model.beans.CodeCountryPair;
+import com.iz.rootfeeder.model.beans.CountryCode;
 
 import android.app.Activity;
 import android.util.Log;
@@ -15,10 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomSpinnerCountryAdapter extends ArrayAdapter<CodeCountryPair> {
-	private List<CodeCountryPair> objects;
+public class CustomSpinnerCountryAdapter extends ArrayAdapter<CountryCode> {
+	private List<CountryCode> objects;
 	private Activity context;
-	public CustomSpinnerCountryAdapter(Activity context, int txtViewResourceId, List<CodeCountryPair> objects) {
+	public CustomSpinnerCountryAdapter(Activity context, int txtViewResourceId, List<CountryCode> objects) {
 		super(context, txtViewResourceId, objects);
 		this.context = context;
 		this.objects=objects;

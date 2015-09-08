@@ -5,7 +5,9 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="lib" path="commons-io-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="opencsv-2.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ismail/android-sdk/platforms/android-19/android.jar">
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="B:/android-sdks/platforms/android-19/android.jar" sourcepath="B:/android-sdks/sources/android-19">
 		<attributes>
 			<attribute name="javadoc_location" value="http://developer.android.com/reference/"/>
 		</attributes>
@@ -13,7 +15,5 @@
 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
